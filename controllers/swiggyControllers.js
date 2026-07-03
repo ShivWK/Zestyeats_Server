@@ -73,14 +73,15 @@ export const addressRecommend = async (req, res) => {
         .json({ error: 'place_id query parameter is required' });
     }
 
-    const mainUrl = `${process.env.BASE_URL}/dapi/misc/address-recommend?place_id=${place_id}`;
+    const mainUrl = `${process.env.BASE_URL}/dapi/misc/address-recommend`;
 
-    const response = await client.get(mainUrl);
+    const response = await client.post(mainUrl, {
+      place_id
+    });
     const origin = req.headers.origin;
 
     res.set({
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET',
     });
     res.status(200).json(response.data);
   } catch (error) {
@@ -102,15 +103,19 @@ export const addressAutoComplete = async (req, res) => {
         .json({ error: 'Input query parameter is required' });
     }
 
-    const mainUrl = `${process.env.BASE_URL}/dapi/misc/place-autocomplete?input=${input}&types=`;
+    const mainUrl = `${process.env.BASE_URL}/dapi/misc/place-autocomplete`;
 
-    const response = await client.get(mainUrl);
+    const response = await client.post(mainUrl, {
+      input,
+      types: [],
+    });
+
     const origin = req.headers.origin;
 
     res.set({
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET',
     });
+
     res.status(200).json(response.data);
   } catch (error) {
     console.error('Place Autocomplete Error:', error.message);
@@ -123,22 +128,23 @@ export const addressAutoComplete = async (req, res) => {
 
 export const addressFromCoordinates = async (req, res) => {
   try {
-    const { lat1, lng1 } = req.query;
+    const { lat, lng } = req.query;
 
-    if (!lat1 || !lng1) {
+    if (!lat || !lng) {
       return res.status(400).json({
         error: 'Both lat and lng query parameters are required',
       });
     }
 
-    const mainUrl = `${process.env.BASE_URL}/dapi/misc/address-recommend?latlng=${lat1}%2C${lng1}`;
+    const mainUrl = `${process.env.BASE_URL}/dapi/misc/address-recommend`;
 
-    const response = await client.get(mainUrl);
+    const response = await client.post(mainUrl, {
+      latlng: `${lat},${lng}`
+    });
     const origin = req.headers.origin;
 
     res.set({
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET',
     });
     res.status(200).json(response.data);
   } catch (error) {
@@ -215,7 +221,7 @@ export const specificFoodCategoryData = asyncErrorHandler(async (req, res) => {
     });
   }
 
-  const mainUrl = `${process.env.BASE_URL}/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&collection=${collection_id}&tags=${tags}&sortBy=&filters=&type=rcv2&offset=0&page_type=null`;
+  const mainUrl = `${process.env.BASE_URL}/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&collection=${collection_id}&tags=${tags}&type=rcv2&offset=0&page_type=null`;
 
   const response = await client.get(mainUrl);
   const origin = req.headers.origin;
@@ -323,7 +329,7 @@ export const suggestedDataHandler = asyncErrorHandler(async (req, res, next) => 
     );
   }
 
-  const mainUrl = `${process.env.BASE_URL}/dapi/restaurants/search/v3?trackingId=b3988e37-6215-174a-2625-44876a86072b&submitAction=SUGGESTION&queryUniqueId=`;
+  const mainUrl = `${process.env.BASE_URL}/dapi/restaurants/search/v3?trackingId=&submitAction=SUGGESTION&queryUniqueId=`;
 
   let response = await client.get(mainUrl, {
     params: {

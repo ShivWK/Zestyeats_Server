@@ -16,9 +16,9 @@ const PORT = process.env.PORT || 5000;
 const mongooseURI = process.env.MONGOOSE_URI;
 
 const allowedOrigins = [
-  'http://localhost:5173',
   'https://zestyeats-beige-gamma.vercel.app',
   'https://zestyeats.shivendra.site',
+  'https://zestyeats.shivendradwivedi.com'
 ];
 
 const app = express();
